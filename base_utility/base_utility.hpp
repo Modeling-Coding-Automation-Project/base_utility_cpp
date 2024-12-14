@@ -176,6 +176,63 @@ inline void copy(std::array<T, N> &source, std::array<T, N> &destination) {
 #endif // USE_STD_COPY
 }
 
+/* copy array part */
+template <typename T, std::size_t Source_Size, std::size_t Destination_Size,
+          std::size_t Source_Start, std::size_t Destination_Start,
+          std::size_t Index>
+struct ArrayCopyPartCore {
+  static void compute(const std::array<T, Source_Size> &source,
+                      std::array<T, Destination_Size> &destination) {
+    destination[Index + Destination_Start] = source[Index + Source_Start];
+    ArrayCopyPartCore<T, Source_Size, Destination_Size, Source_Start,
+                      Destination_Start, Index - 1>::compute(source,
+                                                             destination);
+  }
+};
+
+template <typename T, std::size_t Source_Size, std::size_t Destination_Size,
+          std::size_t Source_Start, std::size_t Destination_Start>
+struct ArrayCopyPartCore<T, Source_Size, Destination_Size, Source_Start,
+                         Destination_Start, 0> {
+  static void compute(const std::array<T, Source_Size> &source,
+                      std::array<T, Destination_Size> &destination) {
+    destination[Destination_Start] = source[Source_Start];
+  }
+};
+
+template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
+          std::size_t Destination_Start, std::size_t Source_Size,
+          std::size_t Destination_Size>
+static inline void
+COMPILED_ARRAY_COPY_PART(const std::array<T, Source_Size> &source,
+                         std::array<T, Destination_Size> &destination) {
+  ArrayCopyPartCore<T, Source_Size, Destination_Size, Source_Start,
+                    Destination_Start, Copy_Size - 1>::compute(source,
+                                                               destination);
+}
+
+template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
+          std::size_t Destination_Start, std::size_t Source_Size,
+          std::size_t Destination_Size>
+inline void copy(std::array<T, Source_Size> &source,
+                 std::array<T, Destination_Size> &destination) {
+
+#ifdef USE_STD_COPY
+
+  std::copy(source.begin() + Source_Start,
+            source.begin() + Source_Start + Copy_Size,
+            destination.begin() + Destination_Start);
+
+#else // USE_STD_COPY
+
+  Base::Utility::COMPILED_ARRAY_COPY_PART<T, Source_Start, Copy_Size,
+                                          Destination_Start, Source_Size,
+                                          Destination_Size>(source,
+                                                            destination);
+
+#endif // USE_STD_COPY
+}
+
 } // namespace Utility
 } // namespace Base
 

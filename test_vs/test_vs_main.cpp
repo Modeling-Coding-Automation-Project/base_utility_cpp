@@ -161,6 +161,20 @@ void check_base_utility(void) {
             "check copy vector.");
     }
 
+    std::array<T, 6> copy_part_destination_array({ static_cast<T>(0) });
+    Base::Utility::copy<T, 2, 3, 1, 7, 6>(copy_input_array, copy_part_destination_array);
+
+    std::array<T, 6> copy_part_array_answer({
+        static_cast<T>(0),
+        static_cast<T>(3),
+        static_cast<T>(4),
+        static_cast<T>(5),
+        static_cast<T>(0),
+        static_cast<T>(0) });
+
+    tester.expect_near(copy_part_destination_array, copy_part_array_answer, NEAR_LIMIT_STRICT,
+        "check copy vector part.");
+
 
     tester.throw_error_if_test_failed();
 }
