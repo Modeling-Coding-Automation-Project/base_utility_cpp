@@ -151,6 +151,16 @@ void check_base_utility(void) {
     tester.expect_near(copy_part_destination, copy_part_vector_answer, NEAR_LIMIT_STRICT,
         "check copy vector part.");
 
+    Base::Utility::copy<T, 2, 0, 1, 0, 6>(empty_vector, copy_part_destination);
+
+    tester.expect_near(copy_part_destination, copy_part_vector_answer, NEAR_LIMIT_STRICT,
+        "check copy vector part empty.");
+
+    Base::Utility::copy<T, 2, 0, 1, 7, 6>(copy_input_vector, copy_part_destination);
+
+    tester.expect_near(copy_part_destination, copy_part_vector_answer, NEAR_LIMIT_STRICT,
+        "check copy vector part zero copy.");
+
 
     /* copy array */
     std::array<T, 0> empty_array;
