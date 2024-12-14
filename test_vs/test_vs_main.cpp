@@ -1,0 +1,124 @@
+﻿#include <type_traits>
+#include <iostream>
+#include <cmath>
+#include <vector>
+#include <stdexcept>
+
+#include "base_utility.hpp"
+
+#include "MCAP_tester.hpp"
+
+
+using namespace Tester;
+
+template <typename T>
+void check_base_utility(void) {
+
+    using namespace Base::Utility;
+
+    constexpr T NEAR_LIMIT_STRICT = std::is_same<T, double>::value ? T(1.0e-6) : T(1.0e-5);
+
+    MCAPTester<T> tester;
+
+    T divixion_min = static_cast<T>(1.0e-10);
+
+    /* avoid zero divide */
+    std::vector<T> avoid_zero_divide_input_vector = {
+        static_cast<T>(-1),
+        static_cast<T>(-1.0e-10),
+        static_cast<T>(-1.0e-20),
+        static_cast<T>(0),
+        static_cast<T>(1.0e-20),
+        static_cast<T>(1.0e-10),
+        static_cast<T>(1)};
+
+    std::vector<T> avoid_zero_divide_answer_vector = {
+        static_cast<T>(-1),
+        static_cast<T>(-1.0e-10),
+        static_cast<T>(-1.0e-20),
+        static_cast<T>(1.0e-10),
+        static_cast<T>(1.0e-10),
+        static_cast<T>(1.0e-10),
+        static_cast<T>(1) };
+
+
+    for (std::size_t i = 0; i < avoid_zero_divide_input_vector.size(); i++) {
+        T avoid_zero_divide_value = avoid_zero_divide(avoid_zero_divide_input_vector[i], divixion_min);
+        tester.expect_near(avoid_zero_divide_value, avoid_zero_divide_answer_vector[i], NEAR_LIMIT_STRICT,
+            "check avoid zero divide.");
+    }
+
+    /* near zero */
+    std::vector<T> near_zero_input_vector = {
+        static_cast<T>(-1),
+        static_cast<T>(-1.0e-10),
+        static_cast<T>(-1.0e-20),
+        static_cast<T>(0),
+        static_cast<T>(1.0e-20),
+        static_cast<T>(1.0e-10),
+        static_cast<T>(1)};
+
+    std::vector<bool> near_zero_answer_vector = {
+        false,
+        false,
+        true,
+        true,
+        true,
+        false,
+        false };
+
+
+    for (std::size_t i = 0; i < near_zero_input_vector.size(); i++) {
+        bool near_zero_value = near_zero(near_zero_input_vector[i], divixion_min);
+        if (near_zero_value != near_zero_answer_vector[i]) {
+            throw std::runtime_error("Test failed.");
+        }
+    }
+
+    /* swap value */
+    T swap_value_1 = static_cast<T>(1.0);
+    T swap_value_2 = static_cast<T>(2.0);
+
+    swap_value(swap_value_1, swap_value_2);
+
+    tester.expect_near(swap_value_1, static_cast<T>(2.0), NEAR_LIMIT_STRICT,
+        "check swap value.");
+
+    /* sign */
+    std::vector<T> sign_input_vector = {
+        static_cast<T>(-1),
+        static_cast<T>(-1.0e-10),
+        static_cast<T>(-1.0e-20),
+        static_cast<T>(0),
+        static_cast<T>(1.0e-20),
+        static_cast<T>(1.0e-10),
+        static_cast<T>(1)};
+
+    std::vector<T> sign_answer_vector = {
+        static_cast<T>(-1),
+        static_cast<T>(-1),
+        static_cast<T>(-1),
+        static_cast<T>(1),
+        static_cast<T>(1),
+        static_cast<T>(1),
+        static_cast<T>(1) };
+
+    for (std::size_t i = 0; i < sign_input_vector.size(); i++) {
+        T sign_value = sign(sign_input_vector[i]);
+        tester.expect_near(sign_value, sign_answer_vector[i], NEAR_LIMIT_STRICT,
+            "check sign.");
+    }
+
+
+    tester.throw_error_if_test_failed();
+}
+
+int main() {
+
+    check_base_utility<double>();
+
+    check_base_utility<float>();
+
+
+    return 0;
+}
