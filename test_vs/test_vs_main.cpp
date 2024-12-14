@@ -121,7 +121,7 @@ void check_base_utility(void) {
     static_cast<T>(7) };
 
     std::vector<T> copy_input_destination(7);
-    Base::Utility::copy<T, 7>(copy_input_destination, copy_input_vector);
+    Base::Utility::copy<T, 7>(copy_input_vector, copy_input_destination);
 
     for (std::size_t i = 0; i < copy_input_vector.size(); i++) {
         tester.expect_near(copy_input_destination[i], copy_input_vector[i], NEAR_LIMIT_STRICT,
@@ -138,7 +138,7 @@ void check_base_utility(void) {
         static_cast<T>(7) };
 
     std::array<T, 7> copy_input_destination_array;
-    Base::Utility::copy<T, 7>(copy_input_destination_array, copy_input_array);
+    Base::Utility::copy<T, 7>(copy_input_array, copy_input_destination_array);
 
     for (std::size_t i = 0; i < copy_input_array.size(); i++) {
         tester.expect_near(copy_input_destination_array[i], copy_input_array[i], NEAR_LIMIT_STRICT,
