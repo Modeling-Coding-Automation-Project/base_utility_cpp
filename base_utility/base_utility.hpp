@@ -58,7 +58,7 @@ template <typename T> inline T sign(T x) {
 template <typename T, std::size_t N, std::size_t Index> struct VectorCopyCore {
   static void compute(const std::vector<T> &source,
                       std::vector<T> &destination) {
-    destination[Index] = source[Index];
+    destination[Index - 1] = source[Index - 1];
     VectorCopyCore<T, N, Index - 1>::compute(source, destination);
   }
 };
@@ -66,14 +66,16 @@ template <typename T, std::size_t N, std::size_t Index> struct VectorCopyCore {
 template <typename T, std::size_t N> struct VectorCopyCore<T, N, 0> {
   static void compute(const std::vector<T> &source,
                       std::vector<T> &destination) {
-    destination[0] = source[0];
+    /* Do Nothing. */
+    static_cast<void>(source);
+    static_cast<void>(destination);
   }
 };
 
 template <typename T, std::size_t N>
 static inline void COMPILED_VECTOR_COPY(const std::vector<T> &source,
                                         std::vector<T> &destination) {
-  VectorCopyCore<T, N, N - 1>::compute(source, destination);
+  VectorCopyCore<T, N, N>::compute(source, destination);
 }
 
 template <typename T, std::size_t N>
@@ -92,11 +94,33 @@ inline void copy(const std::vector<T> &source, std::vector<T> &destination) {
 
 /* copy vector part */
 template <typename T, std::size_t Source_Start, std::size_t Destination_Start,
+          std::size_t Copy_Size>
+struct CheckZeroVectorCopyForStdCopy {
+  static void compute(const std::vector<T> &source,
+                      std::vector<T> &destination) {
+    std::copy(source.begin() + Source_Start,
+              source.begin() + Source_Start + Copy_Size,
+              destination.begin() + Destination_Start);
+  }
+};
+
+template <typename T, std::size_t Source_Start, std::size_t Destination_Start>
+struct CheckZeroVectorCopyForStdCopy<T, Source_Start, Destination_Start, 0> {
+  static void compute(const std::vector<T> &source,
+                      std::vector<T> &destination) {
+    /* Do Nothing. */
+    static_cast<void>(source);
+    static_cast<void>(destination);
+  }
+};
+
+template <typename T, std::size_t Source_Start, std::size_t Destination_Start,
           std::size_t Index>
 struct VectorCopyPartCore {
   static void compute(const std::vector<T> &source,
                       std::vector<T> &destination) {
-    destination[Index + Destination_Start] = source[Index + Source_Start];
+    destination[Index + Destination_Start - 1] =
+        source[Index + Source_Start - 1];
     VectorCopyPartCore<T, Source_Start, Destination_Start, Index - 1>::compute(
         source, destination);
   }
@@ -106,7 +130,9 @@ template <typename T, std::size_t Source_Start, std::size_t Destination_Start>
 struct VectorCopyPartCore<T, Source_Start, Destination_Start, 0> {
   static void compute(const std::vector<T> &source,
                       std::vector<T> &destination) {
-    destination[Destination_Start] = source[Source_Start];
+    /* Do Nothing. */
+    static_cast<void>(source);
+    static_cast<void>(destination);
   }
 };
 
@@ -115,8 +141,8 @@ template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
           std::size_t Destination_Size>
 static inline void COMPILED_VECTOR_COPY_PART(const std::vector<T> &source,
                                              std::vector<T> &destination) {
-  VectorCopyPartCore<T, Source_Start, Destination_Start,
-                     Copy_Size - 1>::compute(source, destination);
+  VectorCopyPartCore<T, Source_Start, Destination_Start, Copy_Size>::compute(
+      source, destination);
 }
 
 template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
@@ -126,9 +152,8 @@ inline void copy(const std::vector<T> &source, std::vector<T> &destination) {
 
 #ifdef USE_STD_COPY
 
-  std::copy(source.begin() + Source_Start,
-            source.begin() + Source_Start + Copy_Size,
-            destination.begin() + Destination_Start);
+  CheckZeroVectorCopyForStdCopy<T, Source_Start, Destination_Start,
+                                Copy_Size>::compute(source, destination);
 
 #else // USE_STD_COPY
 
@@ -144,7 +169,7 @@ inline void copy(const std::vector<T> &source, std::vector<T> &destination) {
 template <typename T, std::size_t N, std::size_t Index> struct ArrayCopyCore {
   static void compute(const std::array<T, N> &source,
                       std::array<T, N> &destination) {
-    destination[Index] = source[Index];
+    destination[Index - 1] = source[Index - 1];
     ArrayCopyCore<T, N, Index - 1>::compute(source, destination);
   }
 };
@@ -152,14 +177,16 @@ template <typename T, std::size_t N, std::size_t Index> struct ArrayCopyCore {
 template <typename T, std::size_t N> struct ArrayCopyCore<T, N, 0> {
   static void compute(const std::array<T, N> &source,
                       std::array<T, N> &destination) {
-    destination[0] = source[0];
+    /* Do Nothing. */
+    static_cast<void>(source);
+    static_cast<void>(destination);
   }
 };
 
 template <typename T, std::size_t N>
 static inline void COMPILED_ARRAY_COPY(const std::array<T, N> &source,
                                        std::array<T, N> &destination) {
-  ArrayCopyCore<T, N, N - 1>::compute(source, destination);
+  ArrayCopyCore<T, N, N>::compute(source, destination);
 }
 
 template <typename T, std::size_t N>
@@ -180,11 +207,36 @@ inline void copy(const std::array<T, N> &source,
 /* copy array part */
 template <typename T, std::size_t Source_Size, std::size_t Destination_Size,
           std::size_t Source_Start, std::size_t Destination_Start,
+          std::size_t Copy_Size>
+struct CheckZeroArrayCopyForStdCopy {
+  static void compute(const std::array<T, Source_Size> &source,
+                      std::array<T, Destination_Size> &destination) {
+    std::copy(source.begin() + Source_Start,
+              source.begin() + Source_Start + Copy_Size,
+              destination.begin() + Destination_Start);
+  }
+};
+
+template <typename T, std::size_t Source_Size, std::size_t Destination_Size,
+          std::size_t Source_Start, std::size_t Destination_Start>
+struct CheckZeroArrayCopyForStdCopy<T, Source_Size, Destination_Size,
+                                    Source_Start, Destination_Start, 0> {
+  static void compute(const std::array<T, Source_Size> &source,
+                      std::array<T, Destination_Size> &destination) {
+    /* Do Nothing. */
+    static_cast<void>(source);
+    static_cast<void>(destination);
+  }
+};
+
+template <typename T, std::size_t Source_Size, std::size_t Destination_Size,
+          std::size_t Source_Start, std::size_t Destination_Start,
           std::size_t Index>
 struct ArrayCopyPartCore {
   static void compute(const std::array<T, Source_Size> &source,
                       std::array<T, Destination_Size> &destination) {
-    destination[Index + Destination_Start] = source[Index + Source_Start];
+    destination[Index + Destination_Start - 1] =
+        source[Index + Source_Start - 1];
     ArrayCopyPartCore<T, Source_Size, Destination_Size, Source_Start,
                       Destination_Start, Index - 1>::compute(source,
                                                              destination);
@@ -197,7 +249,9 @@ struct ArrayCopyPartCore<T, Source_Size, Destination_Size, Source_Start,
                          Destination_Start, 0> {
   static void compute(const std::array<T, Source_Size> &source,
                       std::array<T, Destination_Size> &destination) {
-    destination[Destination_Start] = source[Source_Start];
+    /* Do Nothing. */
+    static_cast<void>(source);
+    static_cast<void>(destination);
   }
 };
 
@@ -208,8 +262,7 @@ static inline void
 COMPILED_ARRAY_COPY_PART(const std::array<T, Source_Size> &source,
                          std::array<T, Destination_Size> &destination) {
   ArrayCopyPartCore<T, Source_Size, Destination_Size, Source_Start,
-                    Destination_Start, Copy_Size - 1>::compute(source,
-                                                               destination);
+                    Destination_Start, Copy_Size>::compute(source, destination);
 }
 
 template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
@@ -220,9 +273,9 @@ inline void copy(const std::array<T, Source_Size> &source,
 
 #ifdef USE_STD_COPY
 
-  std::copy(source.begin() + Source_Start,
-            source.begin() + Source_Start + Copy_Size,
-            destination.begin() + Destination_Start);
+  CheckZeroArrayCopyForStdCopy<T, Source_Size, Destination_Size, Source_Start,
+                               Destination_Start,
+                               Copy_Size>::compute(source, destination);
 
 #else // USE_STD_COPY
 

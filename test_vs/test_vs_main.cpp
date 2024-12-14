@@ -111,6 +111,8 @@ void check_base_utility(void) {
     }
 
     /* copy vector */
+    std::vector<T> empty_vector;
+
     std::vector<T> copy_input_vector = {
     static_cast<T>(1),
     static_cast<T>(2),
@@ -128,6 +130,13 @@ void check_base_utility(void) {
             "check copy vector.");
     }
 
+    Base::Utility::copy<T, 0>(empty_vector, copy_input_destination);
+
+    for (std::size_t i = 0; i < copy_input_vector.size(); i++) {
+        tester.expect_near(copy_input_destination[i], copy_input_vector[i], NEAR_LIMIT_STRICT,
+            "check copy empty vector.");
+    }
+
     std::vector<T> copy_part_destination(6);
     Base::Utility::copy<T, 2, 3, 1, 7, 6>(copy_input_vector, copy_part_destination);
 
@@ -142,8 +151,20 @@ void check_base_utility(void) {
     tester.expect_near(copy_part_destination, copy_part_vector_answer, NEAR_LIMIT_STRICT,
         "check copy vector part.");
 
+    Base::Utility::copy<T, 2, 0, 1, 0, 6>(empty_vector, copy_part_destination);
+
+    tester.expect_near(copy_part_destination, copy_part_vector_answer, NEAR_LIMIT_STRICT,
+        "check copy vector part empty.");
+
+    Base::Utility::copy<T, 2, 0, 1, 7, 6>(copy_input_vector, copy_part_destination);
+
+    tester.expect_near(copy_part_destination, copy_part_vector_answer, NEAR_LIMIT_STRICT,
+        "check copy vector part zero copy.");
+
 
     /* copy array */
+    std::array<T, 0> empty_array;
+
     std::array<T, 7> copy_input_array = {
         static_cast<T>(1),
         static_cast<T>(2),
@@ -158,8 +179,11 @@ void check_base_utility(void) {
 
     for (std::size_t i = 0; i < copy_input_array.size(); i++) {
         tester.expect_near(copy_input_destination_array[i], copy_input_array[i], NEAR_LIMIT_STRICT,
-            "check copy vector.");
+            "check copy array.");
     }
+
+    Base::Utility::copy<T, 0>(empty_array, empty_array);
+
 
     std::array<T, 6> copy_part_destination_array({ static_cast<T>(0) });
     Base::Utility::copy<T, 2, 3, 1, 7, 6>(copy_input_array, copy_part_destination_array);
@@ -173,7 +197,17 @@ void check_base_utility(void) {
         static_cast<T>(0) });
 
     tester.expect_near(copy_part_destination_array, copy_part_array_answer, NEAR_LIMIT_STRICT,
-        "check copy vector part.");
+        "check copy array part.");
+
+    Base::Utility::copy<T, 2, 0, 1, 0, 6>(empty_array, copy_part_destination_array);
+
+    tester.expect_near(copy_part_destination_array, copy_part_array_answer, NEAR_LIMIT_STRICT,
+        "check copy array part empty.");
+
+    Base::Utility::copy<T, 2, 0, 1, 7, 6>(copy_input_array, copy_part_destination_array);
+
+    tester.expect_near(copy_part_destination_array, copy_part_array_answer, NEAR_LIMIT_STRICT,
+        "check copy array part zero copy.");
 
 
     tester.throw_error_if_test_failed();
