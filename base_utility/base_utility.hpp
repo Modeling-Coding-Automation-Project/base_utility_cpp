@@ -54,7 +54,28 @@ template <typename T> inline T sign(T x) {
   }
 }
 
-/* copy */
+/* copy vector */
+template <typename T, std::size_t N, std::size_t Index> struct VectorCopyCore {
+  static void compute(std::vector<T> &destination,
+                      const std::vector<T> &source) {
+    destination[Index] = source[Index];
+    VectorCopyCore<T, N, Index - 1>::compute(destination, source);
+  }
+};
+
+template <typename T, std::size_t N> struct VectorCopyCore<T, N, 0> {
+  static void compute(std::vector<T> &destination,
+                      const std::vector<T> &source) {
+    destination[0] = source[0];
+  }
+};
+
+template <typename T, std::size_t N>
+static inline void COMPILED_VECTOR_COPY(std::vector<T> &destination,
+                                        const std::vector<T> &source) {
+  VectorCopyCore<T, N, N - 1>::compute(destination, source);
+}
+
 template <typename T, std::size_t N>
 inline void copy(std::vector<T> &destination, std::vector<T> &source) {
 
@@ -64,11 +85,31 @@ inline void copy(std::vector<T> &destination, std::vector<T> &source) {
 
 #else // USE_STD_COPY
 
-  for (std::size_t i = 0; i < N; i++) {
-    destination[i] = source[i];
-  }
+  Base::Utility::COMPILED_VECTOR_COPY<T, N>(destination, source);
 
 #endif // USE_STD_COPY
+}
+
+/* copy array */
+template <typename T, std::size_t N, std::size_t Index> struct ArrayCopyCore {
+  static void compute(std::array<T, N> &destination,
+                      const std::array<T, N> &source) {
+    destination[Index] = source[Index];
+    ArrayCopyCore<T, N, Index - 1>::compute(destination, source);
+  }
+};
+
+template <typename T, std::size_t N> struct ArrayCopyCore<T, N, 0> {
+  static void compute(std::array<T, N> &destination,
+                      const std::array<T, N> &source) {
+    destination[0] = source[0];
+  }
+};
+
+template <typename T, std::size_t N>
+static inline void COMPILED_ARRAY_COPY(std::array<T, N> &destination,
+                                       const std::array<T, N> &source) {
+  ArrayCopyCore<T, N, N - 1>::compute(destination, source);
 }
 
 template <typename T, std::size_t N>
@@ -80,9 +121,7 @@ inline void copy(std::array<T, N> &destination, std::array<T, N> &source) {
 
 #else // USE_STD_COPY
 
-  for (std::size_t i = 0; i < N; i++) {
-    destination[i] = source[i];
-  }
+  Base::Utility::COMPILED_ARRAY_COPY<T, N>(destination, source);
 
 #endif // USE_STD_COPY
 }
