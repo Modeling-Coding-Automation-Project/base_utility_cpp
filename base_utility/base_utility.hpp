@@ -90,6 +90,35 @@ inline void copy(std::vector<T> &source, std::vector<T> &destination) {
 #endif // USE_STD_COPY
 }
 
+/* copy vector part */
+template <typename T, std::size_t Source_Start, std::size_t Destination_Start,
+          std::size_t Index>
+struct VectorCopyPartCore {
+  static void compute(const std::vector<T> &source,
+                      std::vector<T> &destination) {
+    destination[Index + Destination_Start] = source[Index + Source_Start];
+    VectorCopyPartCore<T, Source_Start, Destination_Start, Index - 1>::compute(
+        source, destination);
+  }
+};
+
+template <typename T, std::size_t Source_Start, std::size_t Destination_Start>
+struct VectorCopyPartCore<T, Source_Start, Destination_Start, 0> {
+  static void compute(const std::vector<T> &source,
+                      std::vector<T> &destination) {
+    destination[Destination_Start] = source[Source_Start];
+  }
+};
+
+template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
+          std::size_t Destination_Start, std::size_t Source_Size,
+          std::size_t Destination_Size>
+static inline void COMPILED_VECTOR_COPY_PART(const std::vector<T> &source,
+                                             std::vector<T> &destination) {
+  VectorCopyPartCore<T, Source_Start, Destination_Start,
+                     Copy_Size - 1>::compute(source, destination);
+}
+
 template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
           std::size_t Destination_Start, std::size_t Source_Size,
           std::size_t Destination_Size>
@@ -103,10 +132,10 @@ inline void copy(std::vector<T> &source, std::vector<T> &destination) {
 
 #else // USE_STD_COPY
 
-  // Base::Utility::COMPILED_VECTOR_COPY<T, N>(destination, source);
-  std::copy(source.begin() + Source_Start,
-            source.begin() + Source_Start + Copy_Size,
-            destination.begin() + Destination_Start);
+  Base::Utility::COMPILED_VECTOR_COPY_PART<T, Source_Start, Copy_Size,
+                                           Destination_Start, Source_Size,
+                                           Destination_Size>(source,
+                                                             destination);
 
 #endif // USE_STD_COPY
 }
