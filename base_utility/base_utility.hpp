@@ -1,6 +1,16 @@
 #ifndef BASE_UTILITY_HPP
 #define BASE_UTILITY_HPP
 
+#include "base_utility_macros.hpp"
+
+#include <array>
+#include <vector>
+
+#ifdef USE_STD_COPY
+#include <algorithm>
+#else  // USE_STD_COPY
+#endif // USE_STD_COPY
+
 namespace Base {
 namespace Utility {
 
@@ -42,6 +52,38 @@ template <typename T> inline T sign(T x) {
   } else {
     return static_cast<T>(-1);
   }
+}
+
+template <typename T, std::size_t N>
+inline void copy(std::vector<T> &destination, std::vector<T> &source) {
+
+#ifdef USE_STD_COPY
+
+  for (std::size_t i = 0; i < N; i++) {
+    destination[i] = source[i];
+  }
+
+#else // USE_STD_COPY
+
+  std::copy(source.begin(), source.end(), destination.begin());
+
+#endif // USE_STD_COPY
+}
+
+template <typename T, std::size_t N>
+inline void copy(std::array<T, N> &destination, std::array<T, N> &source) {
+
+#ifdef USE_STD_COPY
+
+  for (std::size_t i = 0; i < N; i++) {
+    destination[i] = source[i];
+  }
+
+#else // USE_STD_COPY
+
+  std::copy(source.begin(), source.end(), destination.begin());
+
+#endif // USE_STD_COPY
 }
 
 } // namespace Utility

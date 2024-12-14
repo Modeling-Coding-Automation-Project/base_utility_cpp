@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <array>
 #include <stdexcept>
 
 #include "base_utility.hpp"
@@ -107,6 +108,41 @@ void check_base_utility(void) {
         T sign_value = sign(sign_input_vector[i]);
         tester.expect_near(sign_value, sign_answer_vector[i], NEAR_LIMIT_STRICT,
             "check sign.");
+    }
+
+    /* copy */
+    std::vector<T> copy_input_vector = {
+    static_cast<T>(1),
+    static_cast<T>(2),
+    static_cast<T>(3),
+    static_cast<T>(4),
+    static_cast<T>(5),
+    static_cast<T>(6),
+    static_cast<T>(7) };
+
+    std::vector<T> copy_input_destination(7);
+    Base::Utility::copy<T, 7>(copy_input_destination, copy_input_vector);
+
+    for (std::size_t i = 0; i < copy_input_vector.size(); i++) {
+        tester.expect_near(copy_input_destination[i], copy_input_vector[i], NEAR_LIMIT_STRICT,
+            "check copy vector.");
+    }
+
+    std::array<T, 7> copy_input_array = {
+        static_cast<T>(1),
+        static_cast<T>(2),
+        static_cast<T>(3),
+        static_cast<T>(4),
+        static_cast<T>(5),
+        static_cast<T>(6),
+        static_cast<T>(7) };
+
+    std::array<T, 7> copy_input_destination_array;
+    Base::Utility::copy<T, 7>(copy_input_destination_array, copy_input_array);
+
+    for (std::size_t i = 0; i < copy_input_array.size(); i++) {
+        tester.expect_near(copy_input_destination_array[i], copy_input_array[i], NEAR_LIMIT_STRICT,
+            "check copy vector.");
     }
 
 
