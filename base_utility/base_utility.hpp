@@ -54,18 +54,19 @@ template <typename T> inline T sign(T x) {
   }
 }
 
+/* copy */
 template <typename T, std::size_t N>
 inline void copy(std::vector<T> &destination, std::vector<T> &source) {
 
 #ifdef USE_STD_COPY
 
-  for (std::size_t i = 0; i < N; i++) {
-    destination[i] = source[i];
-  }
+  std::copy(source.begin(), source.end(), destination.begin());
 
 #else // USE_STD_COPY
 
-  std::copy(source.begin(), source.end(), destination.begin());
+  for (std::size_t i = 0; i < N; i++) {
+    destination[i] = source[i];
+  }
 
 #endif // USE_STD_COPY
 }
@@ -75,13 +76,13 @@ inline void copy(std::array<T, N> &destination, std::array<T, N> &source) {
 
 #ifdef USE_STD_COPY
 
-  for (std::size_t i = 0; i < N; i++) {
-    destination[i] = source[i];
-  }
+  std::copy(source.begin(), source.end(), destination.begin());
 
 #else // USE_STD_COPY
 
-  std::copy(source.begin(), source.end(), destination.begin());
+  for (std::size_t i = 0; i < N; i++) {
+    destination[i] = source[i];
+  }
 
 #endif // USE_STD_COPY
 }
