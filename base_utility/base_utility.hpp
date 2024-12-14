@@ -77,7 +77,7 @@ static inline void COMPILED_VECTOR_COPY(const std::vector<T> &source,
 }
 
 template <typename T, std::size_t N>
-inline void copy(std::vector<T> &source, std::vector<T> &destination) {
+inline void copy(const std::vector<T> &source, std::vector<T> &destination) {
 
 #ifdef USE_STD_COPY
 
@@ -122,7 +122,7 @@ static inline void COMPILED_VECTOR_COPY_PART(const std::vector<T> &source,
 template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
           std::size_t Destination_Start, std::size_t Source_Size,
           std::size_t Destination_Size>
-inline void copy(std::vector<T> &source, std::vector<T> &destination) {
+inline void copy(const std::vector<T> &source, std::vector<T> &destination) {
 
 #ifdef USE_STD_COPY
 
@@ -163,7 +163,8 @@ static inline void COMPILED_ARRAY_COPY(const std::array<T, N> &source,
 }
 
 template <typename T, std::size_t N>
-inline void copy(std::array<T, N> &source, std::array<T, N> &destination) {
+inline void copy(const std::array<T, N> &source,
+                 std::array<T, N> &destination) {
 
 #ifdef USE_STD_COPY
 
@@ -214,7 +215,7 @@ COMPILED_ARRAY_COPY_PART(const std::array<T, Source_Size> &source,
 template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
           std::size_t Destination_Start, std::size_t Source_Size,
           std::size_t Destination_Size>
-inline void copy(std::array<T, Source_Size> &source,
+inline void copy(const std::array<T, Source_Size> &source,
                  std::array<T, Destination_Size> &destination) {
 
 #ifdef USE_STD_COPY
