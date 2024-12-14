@@ -199,6 +199,16 @@ void check_base_utility(void) {
     tester.expect_near(copy_part_destination_array, copy_part_array_answer, NEAR_LIMIT_STRICT,
         "check copy array part.");
 
+    Base::Utility::copy<T, 2, 0, 1, 0, 6>(empty_array, copy_part_destination_array);
+
+    tester.expect_near(copy_part_destination_array, copy_part_array_answer, NEAR_LIMIT_STRICT,
+        "check copy array part empty.");
+
+    Base::Utility::copy<T, 2, 0, 1, 7, 6>(copy_input_array, copy_part_destination_array);
+
+    tester.expect_near(copy_part_destination_array, copy_part_array_answer, NEAR_LIMIT_STRICT,
+        "check copy array part zero copy.");
+
 
     tester.throw_error_if_test_failed();
 }
