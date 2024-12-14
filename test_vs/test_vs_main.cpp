@@ -110,7 +110,7 @@ void check_base_utility(void) {
             "check sign.");
     }
 
-    /* copy */
+    /* copy vector */
     std::vector<T> copy_input_vector = {
     static_cast<T>(1),
     static_cast<T>(2),
@@ -128,6 +128,22 @@ void check_base_utility(void) {
             "check copy vector.");
     }
 
+    std::vector<T> copy_part_destination(6);
+    Base::Utility::copy<T, 2, 3, 1, 7, 6>(copy_input_vector, copy_part_destination);
+
+    std::vector<T> copy_part_vector_answer({
+        static_cast<T>(0),
+        static_cast<T>(3),
+        static_cast<T>(4),
+        static_cast<T>(5),
+        static_cast<T>(0),
+        static_cast<T>(0) });
+
+    tester.expect_near(copy_part_destination, copy_part_vector_answer, NEAR_LIMIT_STRICT,
+        "check copy vector part.");
+
+
+    /* copy array */
     std::array<T, 7> copy_input_array = {
         static_cast<T>(1),
         static_cast<T>(2),

@@ -90,19 +90,23 @@ inline void copy(std::vector<T> &source, std::vector<T> &destination) {
 #endif // USE_STD_COPY
 }
 
-template <typename T, std::size_t Destination_Start, std::size_t Copy_Size,
-          std::size_t Source_Start, std::size_t Destination_Size,
-          std::size_t Source_Size>
+template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
+          std::size_t Destination_Start, std::size_t Source_Size,
+          std::size_t Destination_Size>
 inline void copy(std::vector<T> &source, std::vector<T> &destination) {
 
 #ifdef USE_STD_COPY
 
-  std::copy(source.begin() + Source_Start, source.begin() + Copy_Size,
+  std::copy(source.begin() + Source_Start,
+            source.begin() + Source_Start + Copy_Size,
             destination.begin() + Destination_Start);
 
 #else // USE_STD_COPY
 
   // Base::Utility::COMPILED_VECTOR_COPY<T, N>(destination, source);
+  std::copy(source.begin() + Source_Start,
+            source.begin() + Source_Start + Copy_Size,
+            destination.begin() + Destination_Start);
 
 #endif // USE_STD_COPY
 }
