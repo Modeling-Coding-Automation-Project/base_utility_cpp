@@ -113,6 +113,14 @@ struct CheckZeroVectorCopyForStdCopy {
   static void compute(const std::vector<T> &source,
                       std::vector<T> &destination) {
 
+#ifdef BASE_UTILITY_USE_STD_COPY
+
+    std::copy(source.begin() + Source_Start,
+              source.begin() + Source_Start + Copy_Size,
+              destination.begin() + Destination_Start);
+
+#else // BASE_UTILITY_USE_STD_COPY
+
 #ifdef BASE_UTILITY_USE_MEMCPY
 
     std::memcpy(destination.data() + Destination_Start,
@@ -125,6 +133,8 @@ struct CheckZeroVectorCopyForStdCopy {
               destination.begin() + Destination_Start);
 
 #endif // BASE_UTILITY_USE_MEMCPY
+
+#endif // BASE_UTILITY_USE_STD_COPY
   }
 };
 
@@ -253,6 +263,14 @@ struct CheckZeroArrayCopyForStdCopy {
   static void compute(const std::array<T, Source_Size> &source,
                       std::array<T, Destination_Size> &destination) {
 
+#ifdef BASE_UTILITY_USE_STD_COPY
+
+    std::copy(source.begin() + Source_Start,
+              source.begin() + Source_Start + Copy_Size,
+              destination.begin() + Destination_Start);
+
+#else // BASE_UTILITY_USE_STD_COPY
+
 #ifdef BASE_UTILITY_USE_MEMCPY
 
     std::memcpy(destination.data() + Destination_Start,
@@ -265,6 +283,8 @@ struct CheckZeroArrayCopyForStdCopy {
               destination.begin() + Destination_Start);
 
 #endif // BASE_UTILITY_USE_MEMCPY
+
+#endif // BASE_UTILITY_USE_STD_COPY
   }
 };
 
