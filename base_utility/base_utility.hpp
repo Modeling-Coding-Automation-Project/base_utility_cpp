@@ -6,10 +6,16 @@
 #include <array>
 #include <vector>
 
-#ifdef USE_STD_COPY
+#ifdef BASE_UTILITY_USE_STD_COPY
 #include <algorithm>
-#else  // USE_STD_COPY
-#endif // USE_STD_COPY
+#else // BASE_UTILITY_USE_STD_COPY
+
+#ifdef BASE_UTILITY_USE_MEMCPY
+#include <cstring>
+#else  // BASE_UTILITY_USE_MEMCPY
+#endif // BASE_UTILITY_USE_MEMCPY
+
+#endif // BASE_UTILITY_USE_STD_COPY
 
 namespace Base {
 namespace Utility {
@@ -81,15 +87,23 @@ static inline void COMPILED_VECTOR_COPY(const std::vector<T> &source,
 template <typename T, std::size_t N>
 inline void copy(const std::vector<T> &source, std::vector<T> &destination) {
 
-#ifdef USE_STD_COPY
+#ifdef BASE_UTILITY_USE_STD_COPY
 
   std::copy(source.begin(), source.end(), destination.begin());
 
-#else // USE_STD_COPY
+#else // BASE_UTILITY_USE_STD_COPY
+
+#ifdef BASE_UTILITY_USE_MEMCPY
+
+  std::memcpy(destination.data(), source.data(), N * sizeof(T));
+
+#else // BASE_UTILITY_USE_MEMCPY
 
   Base::Utility::COMPILED_VECTOR_COPY<T, N>(source, destination);
 
-#endif // USE_STD_COPY
+#endif // BASE_UTILITY_USE_MEMCPY
+
+#endif // BASE_UTILITY_USE_STD_COPY
 }
 
 /* copy vector part */
@@ -98,9 +112,29 @@ template <typename T, std::size_t Source_Start, std::size_t Destination_Start,
 struct CheckZeroVectorCopyForStdCopy {
   static void compute(const std::vector<T> &source,
                       std::vector<T> &destination) {
+
+#ifdef BASE_UTILITY_USE_STD_COPY
+
     std::copy(source.begin() + Source_Start,
               source.begin() + Source_Start + Copy_Size,
               destination.begin() + Destination_Start);
+
+#else // BASE_UTILITY_USE_STD_COPY
+
+#ifdef BASE_UTILITY_USE_MEMCPY
+
+    std::memcpy(destination.data() + Destination_Start,
+                source.data() + Source_Start, Copy_Size * sizeof(T));
+
+#else // BASE_UTILITY_USE_MEMCPY
+
+    std::copy(source.begin() + Source_Start,
+              source.begin() + Source_Start + Copy_Size,
+              destination.begin() + Destination_Start);
+
+#endif // BASE_UTILITY_USE_MEMCPY
+
+#endif // BASE_UTILITY_USE_STD_COPY
   }
 };
 
@@ -150,19 +184,28 @@ template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
           std::size_t Destination_Size>
 inline void copy(const std::vector<T> &source, std::vector<T> &destination) {
 
-#ifdef USE_STD_COPY
+#ifdef BASE_UTILITY_USE_STD_COPY
 
   CheckZeroVectorCopyForStdCopy<T, Source_Start, Destination_Start,
                                 Copy_Size>::compute(source, destination);
 
-#else // USE_STD_COPY
+#else // BASE_UTILITY_USE_STD_COPY
+
+#ifdef BASE_UTILITY_USE_MEMCPY
+
+  CheckZeroVectorCopyForStdCopy<T, Source_Start, Destination_Start,
+                                Copy_Size>::compute(source, destination);
+
+#else // BASE_UTILITY_USE_MEMCPY
 
   Base::Utility::COMPILED_VECTOR_COPY_PART<T, Source_Start, Copy_Size,
                                            Destination_Start, Source_Size,
                                            Destination_Size>(source,
                                                              destination);
 
-#endif // USE_STD_COPY
+#endif // BASE_UTILITY_USE_MEMCPY
+
+#endif // BASE_UTILITY_USE_STD_COPY
 }
 
 /* copy array */
@@ -193,15 +236,23 @@ template <typename T, std::size_t N>
 inline void copy(const std::array<T, N> &source,
                  std::array<T, N> &destination) {
 
-#ifdef USE_STD_COPY
+#ifdef BASE_UTILITY_USE_STD_COPY
 
   std::copy(source.begin(), source.end(), destination.begin());
 
-#else // USE_STD_COPY
+#else // BASE_UTILITY_USE_STD_COPY
+
+#ifdef BASE_UTILITY_USE_MEMCPY
+
+  std::memcpy(destination.data(), source.data(), N * sizeof(T));
+
+#else // BASE_UTILITY_USE_MEMCPY
 
   Base::Utility::COMPILED_ARRAY_COPY<T, N>(source, destination);
 
-#endif // USE_STD_COPY
+#endif // BASE_UTILITY_USE_MEMCPY
+
+#endif // BASE_UTILITY_USE_STD_COPY
 }
 
 /* copy array part */
@@ -211,9 +262,29 @@ template <typename T, std::size_t Source_Size, std::size_t Destination_Size,
 struct CheckZeroArrayCopyForStdCopy {
   static void compute(const std::array<T, Source_Size> &source,
                       std::array<T, Destination_Size> &destination) {
+
+#ifdef BASE_UTILITY_USE_STD_COPY
+
     std::copy(source.begin() + Source_Start,
               source.begin() + Source_Start + Copy_Size,
               destination.begin() + Destination_Start);
+
+#else // BASE_UTILITY_USE_STD_COPY
+
+#ifdef BASE_UTILITY_USE_MEMCPY
+
+    std::memcpy(destination.data() + Destination_Start,
+                source.data() + Source_Start, Copy_Size * sizeof(T));
+
+#else // BASE_UTILITY_USE_MEMCPY
+
+    std::copy(source.begin() + Source_Start,
+              source.begin() + Source_Start + Copy_Size,
+              destination.begin() + Destination_Start);
+
+#endif // BASE_UTILITY_USE_MEMCPY
+
+#endif // BASE_UTILITY_USE_STD_COPY
   }
 };
 
@@ -271,20 +342,30 @@ template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
 inline void copy(const std::array<T, Source_Size> &source,
                  std::array<T, Destination_Size> &destination) {
 
-#ifdef USE_STD_COPY
+#ifdef BASE_UTILITY_USE_STD_COPY
 
   CheckZeroArrayCopyForStdCopy<T, Source_Size, Destination_Size, Source_Start,
                                Destination_Start,
                                Copy_Size>::compute(source, destination);
 
-#else // USE_STD_COPY
+#else // BASE_UTILITY_USE_STD_COPY
+
+#ifdef BASE_UTILITY_USE_MEMCPY
+
+  CheckZeroArrayCopyForStdCopy<T, Source_Size, Destination_Size, Source_Start,
+                               Destination_Start,
+                               Copy_Size>::compute(source, destination);
+
+#else // BASE_UTILITY_USE_MEMCPY
 
   Base::Utility::COMPILED_ARRAY_COPY_PART<T, Source_Start, Copy_Size,
                                           Destination_Start, Source_Size,
                                           Destination_Size>(source,
                                                             destination);
 
-#endif // USE_STD_COPY
+#endif // BASE_UTILITY_USE_MEMCPY
+
+#endif // BASE_UTILITY_USE_STD_COPY
 }
 
 } // namespace Utility
