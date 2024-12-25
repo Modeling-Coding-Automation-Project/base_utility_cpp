@@ -2,12 +2,20 @@ name: Run test VS
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ develop, create_memcpy_mode ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        define:
+          - ""
+          - "-DBASE_UTILITY_USE_STD_COPY"
+          - "-DBASE_UTILITY_USE_MEMCPY"
+          - "-DBASE_UTILITY_USE_STD_COPY -DBASE_UTILITY_USE_MEMCPY"
 
     steps:
     - name: Checkout code
@@ -18,18 +26,6 @@ jobs:
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y g++
 
-    - name: Build C++ application
+    - name: Build and Run C++ application
       run: |
-        g++ -std=c++11 -Wall -I ./base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp
-
-    - name: Run the application
-      run: |
-        ./test_vs/app
-
-    - name: Build C++ application with USE_STD_COPY
-      run: |
-        g++ -std=c++11 -Wall -DUSE_STD_COPY -I ./base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp
-
-    - name: Run the application with USE_STD_COPY
-      run: |
-        ./test_vs/app
+        g++ -std=c++11 -Wall ${{ matrix.define }} -I ./base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp && ./test_vs/app
