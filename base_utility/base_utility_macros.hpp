@@ -1,14 +1,14 @@
-#ifndef BASE_UTILITY_MACROS_HPP
-#define BASE_UTILITY_MACROS_HPP
+#ifndef __BASE_UTILITY_MACROS_HPP__
+#define __BASE_UTILITY_MACROS_HPP__
 
 /* Comment out if you want to use the standard copy function */
-// #define BASE_UTILITY_USE_STD_COPY
+// #define __BASE_UTILITY_USE_STD_COPY__
 
-#ifndef BASE_UTILITY_USE_STD_COPY
+#ifndef __BASE_UTILITY_USE_STD_COPY__
 
 /* Comment out if you want to use memcpy function */
 // #define BASE_UTILITY_USE_MEMCPY
 
-#endif // BASE_UTILITY_USE_STD_COPY
+#endif // __BASE_UTILITY_USE_STD_COPY__
 
-#endif // BASE_UTILITY_MACROS_HPP
+#endif // __BASE_UTILITY_MACROS_HPP__

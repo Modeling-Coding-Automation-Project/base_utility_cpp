@@ -2,7 +2,7 @@ name: Run test VS
 
 on:
   push:
-    branches: [ develop, create_memcpy_mode ]
+    branches: [ develop ]
 
 jobs:
   build:
@@ -13,9 +13,9 @@ jobs:
       matrix:
         define:
           - ""
-          - "-DBASE_UTILITY_USE_STD_COPY"
-          - "-DBASE_UTILITY_USE_MEMCPY"
-          - "-DBASE_UTILITY_USE_STD_COPY -DBASE_UTILITY_USE_MEMCPY"
+          - "-D__BASE_UTILITY_USE_STD_COPY__"
+          - "-D__BASE_UTILITY_USE_MEMCPY__"
+          - "-D__BASE_UTILITY_USE_STD_COPY__ -D__BASE_UTILITY_USE_MEMCPY__"
 
     steps:
     - name: Checkout code
