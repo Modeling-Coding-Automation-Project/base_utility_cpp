@@ -368,6 +368,35 @@ inline void copy(const std::array<T, Source_Size> &source,
 #endif // __BASE_UTILITY_USE_STD_COPY__
 }
 
+/* Sort */
+template <typename T, std::size_t N>
+inline int partition(std::array<T, N> &input_array, int left, int right) {
+  T pivot = input_array[right];
+  int i = left - 1;
+  for (int j = left; j < right; ++j) {
+    if (input_array[j] < pivot) {
+      ++i;
+      Base::Utility::swap_value(input_array[i], input_array[j]);
+    }
+  }
+  Base::Utility::swap_value(input_array[i + 1], input_array[right]);
+  return i + 1;
+}
+
+template <typename T, std::size_t N>
+inline void quickSort(std::array<T, N> &input_array, int left, int right) {
+  if (left < right) {
+    int pivotIndex = partition(input_array, left, right);
+    quickSort(input_array, left, pivotIndex - 1);
+    quickSort(input_array, pivotIndex + 1, right);
+  }
+}
+
+template <typename T, std::size_t N>
+inline void sort(std::array<T, N> &input_array) {
+  quickSort(input_array, 0, static_cast<int>(input_array.size() - 1));
+}
+
 } // namespace Utility
 } // namespace Base
 
