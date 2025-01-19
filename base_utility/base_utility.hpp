@@ -368,7 +368,35 @@ inline void copy(const std::array<T, Source_Size> &source,
 #endif // __BASE_UTILITY_USE_STD_COPY__
 }
 
-/* Sort */
+/* Sort vector */
+template <typename T>
+inline int partition(std::vector<T> &input_vector, int left, int right) {
+  T pivot = input_vector[right];
+  int i = left - 1;
+  for (int j = left; j < right; ++j) {
+    if (input_vector[j] < pivot) {
+      ++i;
+      Base::Utility::swap_value(input_vector[i], input_vector[j]);
+    }
+  }
+  Base::Utility::swap_value(input_vector[i + 1], input_vector[right]);
+  return i + 1;
+}
+
+template <typename T>
+inline void quickSort(std::vector<T> &input_vector, int left, int right) {
+  if (left < right) {
+    int pivotIndex = partition(input_vector, left, right);
+    quickSort(input_vector, left, pivotIndex - 1);
+    quickSort(input_vector, pivotIndex + 1, right);
+  }
+}
+
+template <typename T> inline void sort(std::vector<T> &input_vector) {
+  quickSort(input_vector, 0, static_cast<int>(input_vector.size() - 1));
+}
+
+/* Sort array */
 template <typename T, std::size_t N>
 inline int partition(std::array<T, N> &input_array, int left, int right) {
   T pivot = input_array[right];
