@@ -368,6 +368,65 @@ inline void copy(const std::array<T, Source_Size> &source,
 #endif // __BASE_UTILITY_USE_STD_COPY__
 }
 
+/* Sort vector */
+template <typename T>
+inline int partition_for_sort(std::vector<T> &input_vector, int left,
+                              int right) {
+  T pivot = input_vector[right];
+  int i = left - 1;
+  for (int j = left; j < right; ++j) {
+    if (input_vector[j] < pivot) {
+      ++i;
+      Base::Utility::swap_value(input_vector[i], input_vector[j]);
+    }
+  }
+  Base::Utility::swap_value(input_vector[i + 1], input_vector[right]);
+  return i + 1;
+}
+
+template <typename T>
+inline void quick_sort(std::vector<T> &input_vector, int left, int right) {
+  if (left < right) {
+    int pivotIndex = partition_for_sort(input_vector, left, right);
+    quick_sort(input_vector, left, pivotIndex - 1);
+    quick_sort(input_vector, pivotIndex + 1, right);
+  }
+}
+
+template <typename T> inline void sort(std::vector<T> &input_vector) {
+  quick_sort(input_vector, 0, static_cast<int>(input_vector.size() - 1));
+}
+
+/* Sort array */
+template <typename T, std::size_t N>
+inline int partition_for_sort(std::array<T, N> &input_array, int left,
+                              int right) {
+  T pivot = input_array[right];
+  int i = left - 1;
+  for (int j = left; j < right; ++j) {
+    if (input_array[j] < pivot) {
+      ++i;
+      Base::Utility::swap_value(input_array[i], input_array[j]);
+    }
+  }
+  Base::Utility::swap_value(input_array[i + 1], input_array[right]);
+  return i + 1;
+}
+
+template <typename T, std::size_t N>
+inline void quick_sort(std::array<T, N> &input_array, int left, int right) {
+  if (left < right) {
+    int pivotIndex = partition_for_sort(input_array, left, right);
+    quick_sort(input_array, left, pivotIndex - 1);
+    quick_sort(input_array, pivotIndex + 1, right);
+  }
+}
+
+template <typename T, std::size_t N>
+inline void sort(std::array<T, N> &input_array) {
+  quick_sort(input_array, 0, static_cast<int>(input_array.size() - 1));
+}
+
 } // namespace Utility
 } // namespace Base
 

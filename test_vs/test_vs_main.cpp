@@ -210,6 +210,50 @@ void check_base_utility(void) {
         "check copy array part zero copy.");
 
 
+    /* Sort vector */
+    std::vector<T> sort_vector = {
+        static_cast<T>(5),
+        static_cast<T>(3),
+        static_cast<T>(4),
+        static_cast<T>(1),
+        static_cast<T>(2)
+    };
+
+    Base::Utility::sort(sort_vector);
+
+    std::vector<T> sort_vector_answer = {
+        static_cast<T>(1),
+        static_cast<T>(2),
+        static_cast<T>(3),
+        static_cast<T>(4),
+        static_cast<T>(5)
+    };
+
+    tester.expect_near(sort_vector, sort_vector_answer, NEAR_LIMIT_STRICT,
+        "check sort vector.");
+
+    /* Sort array */
+    std::array<T, 5> sort_array = { 
+        static_cast<T>(5),
+        static_cast<T>(3),
+        static_cast<T>(4),
+        static_cast<T>(1),
+        static_cast<T>(2)
+    };
+    Base::Utility::sort(sort_array);
+
+    std::array<T, 5> sort_array_answer = {
+        static_cast<T>(1),
+        static_cast<T>(2),
+        static_cast<T>(3),
+        static_cast<T>(4),
+        static_cast<T>(5)
+    };
+
+    tester.expect_near(sort_array, sort_array_answer, NEAR_LIMIT_STRICT,
+        "check sort array.");
+
+
     tester.throw_error_if_test_failed();
 }
 
