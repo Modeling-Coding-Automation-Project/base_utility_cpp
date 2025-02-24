@@ -66,6 +66,7 @@ namespace VectorCopy {
 template <typename T, std::size_t N, std::size_t Index> struct Core {
   static void compute(const std::vector<T> &source,
                       std::vector<T> &destination) {
+
     destination[Index - 1] = source[Index - 1];
     Core<T, N, Index - 1>::compute(source, destination);
   }
@@ -159,6 +160,7 @@ template <typename T, std::size_t Source_Start, std::size_t Destination_Start,
 struct Core {
   static void compute(const std::vector<T> &source,
                       std::vector<T> &destination) {
+
     destination[Index + Destination_Start - 1] =
         source[Index + Source_Start - 1];
     Core<T, Source_Start, Destination_Start, Index - 1>::compute(source,
@@ -181,6 +183,7 @@ template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
           std::size_t Destination_Size>
 static inline void copy(const std::vector<T> &source,
                         std::vector<T> &destination) {
+
   Core<T, Source_Start, Destination_Start, Copy_Size>::compute(source,
                                                                destination);
 }
@@ -220,6 +223,7 @@ namespace ArrayCopy {
 template <typename T, std::size_t N, std::size_t Index> struct Core {
   static void compute(const std::array<T, N> &source,
                       std::array<T, N> &destination) {
+
     destination[Index - 1] = source[Index - 1];
     Core<T, N, Index - 1>::compute(source, destination);
   }
@@ -270,6 +274,7 @@ template <typename T, std::size_t Source_Size, std::size_t Destination_Size,
           std::size_t Source_Start, std::size_t Destination_Start,
           std::size_t Copy_Size>
 struct CheckZeroArrayCopyForStdCopy {
+
   static void compute(const std::array<T, Source_Size> &source,
                       std::array<T, Destination_Size> &destination) {
 
@@ -318,6 +323,7 @@ template <typename T, std::size_t Source_Size, std::size_t Destination_Size,
 struct Core {
   static void compute(const std::array<T, Source_Size> &source,
                       std::array<T, Destination_Size> &destination) {
+
     destination[Index + Destination_Start - 1] =
         source[Index + Source_Start - 1];
     Core<T, Source_Size, Destination_Size, Source_Start, Destination_Start,
@@ -342,6 +348,7 @@ template <typename T, std::size_t Source_Start, std::size_t Copy_Size,
           std::size_t Destination_Size>
 static inline void copy(const std::array<T, Source_Size> &source,
                         std::array<T, Destination_Size> &destination) {
+
   Core<T, Source_Size, Destination_Size, Source_Start, Destination_Start,
        Copy_Size>::compute(source, destination);
 }
@@ -382,6 +389,7 @@ inline void copy(const std::array<T, Source_Size> &source,
 template <typename T>
 inline int partition_for_sort(std::vector<T> &input_vector, int left,
                               int right) {
+
   T pivot = input_vector[right];
   int i = left - 1;
   for (int j = left; j < right; ++j) {
@@ -397,6 +405,7 @@ inline int partition_for_sort(std::vector<T> &input_vector, int left,
 template <typename T>
 inline void quick_sort(std::vector<T> &input_vector, int left, int right) {
   if (left < right) {
+
     int pivotIndex = partition_for_sort(input_vector, left, right);
     quick_sort(input_vector, left, pivotIndex - 1);
     quick_sort(input_vector, pivotIndex + 1, right);
@@ -411,6 +420,7 @@ template <typename T> inline void sort(std::vector<T> &input_vector) {
 template <typename T, std::size_t N>
 inline int partition_for_sort(std::array<T, N> &input_array, int left,
                               int right) {
+
   T pivot = input_array[right];
   int i = left - 1;
   for (int j = left; j < right; ++j) {
@@ -426,6 +436,7 @@ inline int partition_for_sort(std::array<T, N> &input_array, int left,
 template <typename T, std::size_t N>
 inline void quick_sort(std::array<T, N> &input_array, int left, int right) {
   if (left < right) {
+
     int pivotIndex = partition_for_sort(input_array, left, right);
     quick_sort(input_array, left, pivotIndex - 1);
     quick_sort(input_array, pivotIndex + 1, right);
