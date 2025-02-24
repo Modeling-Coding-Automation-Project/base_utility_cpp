@@ -61,15 +61,18 @@ template <typename T> inline T sign(T x) {
 }
 
 /* copy vector */
-template <typename T, std::size_t N, std::size_t Index> struct VectorCopyCore {
+
+namespace VectorCopy {
+
+template <typename T, std::size_t N, std::size_t Index> struct Core {
   static void compute(const std::vector<T> &source,
                       std::vector<T> &destination) {
     destination[Index - 1] = source[Index - 1];
-    VectorCopyCore<T, N, Index - 1>::compute(source, destination);
+    Core<T, N, Index - 1>::compute(source, destination);
   }
 };
 
-template <typename T, std::size_t N> struct VectorCopyCore<T, N, 0> {
+template <typename T, std::size_t N> struct Core<T, N, 0> {
   static void compute(const std::vector<T> &source,
                       std::vector<T> &destination) {
     /* Do Nothing. */
@@ -79,10 +82,12 @@ template <typename T, std::size_t N> struct VectorCopyCore<T, N, 0> {
 };
 
 template <typename T, std::size_t N>
-static inline void COMPILED_VECTOR_COPY(const std::vector<T> &source,
-                                        std::vector<T> &destination) {
-  VectorCopyCore<T, N, N>::compute(source, destination);
+static inline void copy(const std::vector<T> &source,
+                        std::vector<T> &destination) {
+  Core<T, N, N>::compute(source, destination);
 }
+
+} // namespace VectorCopy
 
 template <typename T, std::size_t N>
 inline void copy(const std::vector<T> &source, std::vector<T> &destination) {
@@ -99,7 +104,7 @@ inline void copy(const std::vector<T> &source, std::vector<T> &destination) {
 
 #else // __BASE_UTILITY_USE_MEMCPY__
 
-  Base::Utility::COMPILED_VECTOR_COPY<T, N>(source, destination);
+  VectorCopy::copy<T, N>(source, destination);
 
 #endif // __BASE_UTILITY_USE_MEMCPY__
 
