@@ -31,28 +31,29 @@ namespace Base {
 namespace Utility {
 
 /**
- * @brief Ensures that the input value is not too close to zero to avoid
- * division by zero errors.
+ * @brief Avoids division by zero by ensuring the input value is not too close
+ * to zero.
  *
- * This function checks if the input value `in` is less than the specified
- * minimum division threshold `division_min`. If so, it adjusts the value to be
- * at least `division_min` (for non-negative inputs) or at most `-division_min`
- * (for negative inputs close to zero). This helps prevent division by zero or
- * very small numbers that could cause numerical instability.
+ * This function checks if the input value `in` is within a small range around
+ * zero defined by `division_min`. If `in` is non-negative and less than
+ * `division_min`, it returns `division_min`. If `in` is negative and greater
+ * than `-division_min`, it returns `-division_min`. Otherwise, it returns `in`
+ * unchanged. This is useful for preventing division by zero or very small
+ * numbers that could lead to numerical instability.
  *
  * @tparam T Numeric type of the input value.
- * @param in The input value to be checked.
- * @param division_min The minimum absolute value allowed for division.
- * @return The adjusted value, guaranteed to be at least `division_min` in
- * magnitude if originally too close to zero.
+ * @param in The value to be checked and potentially adjusted.
+ * @param division_min The minimum threshold to avoid near-zero values.
+ * @return T The adjusted value that is guaranteed to be outside the near-zero
+ * range.
  */
 template <typename T> inline T avoid_zero_divide(T in, T division_min) {
-  if (in < division_min) {
-    if (in >= 0) {
-      return division_min;
-    } else if (in > -division_min) {
-      return -division_min;
-    }
+  if ((in >= static_cast<T>(0)) && (in < division_min)) {
+    return division_min;
+  }
+
+  if ((in < static_cast<T>(0)) && (in > -division_min)) {
+    return -division_min;
   }
 
   return in;
