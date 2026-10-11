@@ -2,6 +2,10 @@
 
 このリポジトリでは、他のリポジトリで用いる共通の基本機能をまとめています。
 
+## ドキュメント
+
+- [Base Utility の概要](./document/base_utility_overview.md)
+
 ### 対応言語バージョン
 
 C++11
