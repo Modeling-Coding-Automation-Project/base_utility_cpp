@@ -799,15 +799,15 @@ inline int partition_for_sort(std::vector<T> &input_vector, int left,
                               int right) {
 
   T pivot = input_vector[right];
-  int i = left - 1;
+  int i = left;
   for (int j = left; j < right; ++j) {
     if (input_vector[j] < pivot) {
-      ++i;
       Base::Utility::swap_value(input_vector[i], input_vector[j]);
+      ++i;
     }
   }
-  Base::Utility::swap_value(input_vector[i + 1], input_vector[right]);
-  return i + 1;
+  Base::Utility::swap_value(input_vector[i], input_vector[right]);
+  return i;
 }
 
 /**
@@ -869,16 +869,18 @@ template <typename T, std::size_t N>
 inline int partition_for_sort(std::array<T, N> &input_array, int left,
                               int right) {
 
-  T pivot = input_array[right];
-  int i = left - 1;
+  T pivot = input_array.at(static_cast<std::size_t>(right));
+  int i = left;
   for (int j = left; j < right; ++j) {
-    if (input_array[j] < pivot) {
+    if (input_array.at(static_cast<std::size_t>(j)) < pivot) {
+      Base::Utility::swap_value(input_array.at(static_cast<std::size_t>(i)),
+                                input_array.at(static_cast<std::size_t>(j)));
       ++i;
-      Base::Utility::swap_value(input_array[i], input_array[j]);
     }
   }
-  Base::Utility::swap_value(input_array[i + 1], input_array[right]);
-  return i + 1;
+  Base::Utility::swap_value(input_array.at(static_cast<std::size_t>(i)),
+                            input_array.at(static_cast<std::size_t>(right)));
+  return i;
 }
 
 /**
