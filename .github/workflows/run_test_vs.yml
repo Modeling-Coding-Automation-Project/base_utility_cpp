@@ -7,26 +7,26 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         define:
-          - ""
-          - "-DBASE_UTILITY_USE_STD_COPY_"
-          - "-DBASE_UTILITY_USE_MEMCPY_"
-          - "-DBASE_UTILITY_USE_STD_COPY_ -DBASE_UTILITY_USE_MEMCPY_"
+        - ''
+        - -DBASE_UTILITY_USE_STD_COPY_
+        - -DBASE_UTILITY_USE_MEMCPY_
+        - -DBASE_UTILITY_USE_STD_COPY_ -DBASE_UTILITY_USE_MEMCPY_
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v7
       with:
         submodules: recursive
-
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y g++
-
     - name: Build and Run C++ application
-      run: |
-        g++ -std=c++11 -Wall -Wextra -Werror ${{ matrix.define }} -I ./base_utility -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp && ./test_vs/app
+      run: 'g++ -std=c++11 -Wall -Wextra -Werror ${{ matrix.define }} -I ./base_utility
+        -I ./test_vs/MCAP_tester/include -o ./test_vs/app ./test_vs/test_vs_main.cpp
+        && ./test_vs/app
+
+        '
